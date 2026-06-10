@@ -1,14 +1,13 @@
 version: "3.8"
 
 services:
-  app:
+  maskedit:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: maskedit-app
     restart: unless-stopped
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     environment:
       - DB_HOST=db
       - DB_PORT=3306
@@ -23,7 +22,6 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: maskedit-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-MaskEditRoot2026!}
