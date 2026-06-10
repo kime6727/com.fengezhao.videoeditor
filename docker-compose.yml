@@ -37,12 +37,14 @@ services:
       - ./database/migration_add_author_id.sql:/docker-entrypoint-initdb.d/05-author_id.sql
       - ./database/migration_add_user_management.sql:/docker-entrypoint-initdb.d/06-user_mgmt.sql
       - ./database/migration_category_short_id.sql:/docker-entrypoint-initdb.d/07-category.sql
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      - ./database/migrate_user_id_length_fix.sql:/docker-entrypoint-initdb.d/08-userid-fix.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-MaskEditRoot2026!}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost || exit 1"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
 volumes:
   db_data:
