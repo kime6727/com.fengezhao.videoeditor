@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: maskedit-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=maskedit
+      - DB_USER=maskedit
+      - DB_PASSWORD=${DB_PASSWORD:-MaskEdit2026!}
+    volumes:
+      - uploads_data:/var/www/html/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: maskedit-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-MaskEditRoot2026!}
+      MYSQL_DATABASE: maskedit
+      MYSQL_USER: maskedit
+      MYSQL_PASSWORD: ${DB_PASSWORD:-MaskEdit2026!}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./database/migration_add_admins_table.sql:/docker-entrypoint-initdb.d/02-admins.sql
+      - ./database/migration_add_agreement_url.sql:/docker-entrypoint-initdb.d/03-agreement.sql
+      - ./database/migration_add_apple_id.sql:/docker-entrypoint-initdb.d/04-apple_id.sql
+      - ./database/migration_add_author_id.sql:/docker-entrypoint-initdb.d/05-author_id.sql
+      - ./database/migration_add_user_management.sql:/docker-entrypoint-initdb.d/06-user_mgmt.sql
+      - ./database/migration_category_short_id.sql:/docker-entrypoint-initdb.d/07-category.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-MaskEditRoot2026!}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
+  uploads_data:

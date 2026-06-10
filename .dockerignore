@@ -1,0 +1,10 @@
+.DS_Store
+.git
+.gitignore
+.env
+*.md
+*.zip
+*.png
+数据库备份/
+.idea/
+.vscode/

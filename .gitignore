@@ -1,0 +1,31 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment (don't commit secrets)
+.env
+
+# Uploads (runtime data)
+uploads/
+
+# Backups (large SQL dumps)
+数据库备份/
+
+# FTP scripts (not needed in repo)
+upload.lftp
+upload_with_ftp.sh
+
+# Debug/migration one-off scripts
+check_data.php
+check_file_content.php
+clean_categories.php
+debug_download.php
+migrate_apple_id.php
+migrate_category_id.php
+2.png
