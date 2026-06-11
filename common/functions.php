@@ -639,7 +639,7 @@ function getVideoListForWaterfall($userId, $categoryId = null, $page = 1, $pageS
         }
     }
 
-    $sql = "SELECT vm.material_id, vm.name, vm.video_url, vm.thumbnail_url,
+    $sql = "SELECT DISTINCT vm.material_id, vm.name, vm.video_url, vm.thumbnail_url,
                    vm.download_count, vm.like_count, vm.created_at,
                    u.user_id as author_id, u.username as author_name, u.avatar as author_avatar
             FROM `video_materials` vm

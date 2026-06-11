@@ -33,7 +33,7 @@ if ($userId) {
     }
 }
 
-$sql = "SELECT tm.material_id, tm.content, tm.copy_count, tm.like_count, tm.created_at
+$sql = "SELECT DISTINCT tm.material_id, tm.content, tm.copy_count, tm.like_count, tm.created_at, tm.author_id
         FROM `text_materials` tm";
 $params = [];
 
