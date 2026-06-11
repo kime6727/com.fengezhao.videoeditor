@@ -1,10 +1,12 @@
 <?php
-// Temporary diagnostic script - check table columns
+// Temporary diagnostic script - check & fix table columns
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/config/database.php';
+
+$dbConfig = require __DIR__ . '/config/database.php';
+$dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
 
 try {
-    $pdo = getPDO();
+    $pdo = new PDO($dsn, $dbConfig['username'], $dbConfig['password'], $dbConfig['options']);
     
     // Check columns for all material tables
     $tables = ['video_materials', 'image_text_materials', 'video_text_materials', 'text_materials', 'users'];
