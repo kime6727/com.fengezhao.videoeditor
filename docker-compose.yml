@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    expose:
-      - "80"
+    ports:
+      - "8080:80"
     environment:
       - DB_HOST=db
       - DB_PORT=3306
@@ -19,16 +19,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=dokploy-network"
-      - "traefik.http.routers.maskedit.rule=Host(`maskedit.weburl.cloudns.be`)"
-      - "traefik.http.routers.maskedit.entrypoints=websecure"
-      - "traefik.http.routers.maskedit.tls=true"
-      - "traefik.http.services.maskedit.loadbalancer.server.port=80"
-    networks:
-      - default
-      - dokploy-network
 
   db:
     image: mysql:8.0
@@ -55,10 +45,6 @@ services:
       timeout: 10s
       retries: 10
       start_period: 30s
-
-networks:
-  dokploy-network:
-    external: true
 
 volumes:
   db_data:
