@@ -8,6 +8,10 @@ $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfi
 try {
     $pdo = new PDO($dsn, $dbConfig['username'], $dbConfig['password'], $dbConfig['options']);
     
+    // Show all video records
+    $stmt = $pdo->query("SELECT id, material_id, name, created_at FROM video_materials ORDER BY id");
+    $result['all_videos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
     // Find duplicate material_ids in video_materials
     $stmt = $pdo->query("SELECT material_id, COUNT(*) as cnt FROM video_materials GROUP BY material_id HAVING cnt > 1");
     $dupes = $stmt->fetchAll(PDO::FETCH_ASSOC);
