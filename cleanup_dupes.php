@@ -16,7 +16,9 @@ try {
     $stmt = $pdo->query("SELECT material_id, COUNT(*) as cnt FROM video_materials GROUP BY material_id HAVING cnt > 1");
     $dupes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    $result = ['duplicates_found' => count($dupes), 'deleted' => 0, 'details' => []];
+    $result['duplicates_found'] = count($dupes);
+    $result['deleted'] = 0;
+    $result['details'] = [];
     
     foreach ($dupes as $dupe) {
         $mid = $dupe['material_id'];
