@@ -12,6 +12,28 @@ try {
     $stmt = $pdo->query("SELECT id, material_id, name, created_at FROM video_materials ORDER BY id");
     $result['all_videos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Delete duplicate videos by name (keep highest id per name)
+    $stmt = $pdo->query("SELECT name, GROUP_CONCAT(id ORDER BY id) as ids, COUNT(*) as cnt 
+                          FROM video_materials GROUP BY name HAVING cnt > 1");
+    $nameDupes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($nameDupes as $nd) {
+        $ids = explode(',', $nd['ids']);
+        $keepId = end($ids); // keep the newest (highest id)
+        array_pop($ids); // remove the kept one
+        foreach ($ids as $delId) {
+            // Delete category relations for this material
+            $stmt2 = $pdo->prepare("SELECT material_id FROM video_materials WHERE id = ?");
+            $stmt2->execute([$delId]);
+            $mid = $stmt2->fetchColumn();
+            if ($mid) {
+                $pdo->prepare("DELETE FROM category_relations WHERE material_id = ? AND material_type = 1")->execute([$mid]);
+            }
+            $pdo->prepare("DELETE FROM video_materials WHERE id = ?")->execute([$delId]);
+            $result['deleted']++;
+        }
+    }
+    
     // Find duplicate material_ids in video_materials
     $stmt = $pdo->query("SELECT material_id, COUNT(*) as cnt FROM video_materials GROUP BY material_id HAVING cnt > 1");
     $dupes = $stmt->fetchAll(PDO::FETCH_ASSOC);
